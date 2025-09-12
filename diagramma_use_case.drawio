@@ -13,6 +13,9 @@
         <mxCell id="kmXTIjUS7AbVIy1LLsvB-6" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
           <mxGeometry x="120" y="420" width="30" height="60" as="geometry" />
         </mxCell>
+        <mxCell id="ejbKU8qMkQUyfWApSMIy-1" value="EXTEND:" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="600" y="240" width="80" height="30" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
