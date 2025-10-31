@@ -1,0 +1,31 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+:root {
+    --bianco: #ffffff;
+    --grigioChiaro: #e0e0e0;
+    --grigioStroke: #CDC3C3;
+    --grigioScuro: #CECDCF;
+    --strokeScura: #767676;
+    --nero: #242121;
+
+    --verdeAcqua: #5E8189;
+    --verdino: #63895E;
+}
+
+
+/*---------------------------------------
+    Main Sections
+------------------------------------------*/
+#main {
+    width: 100%;
+    height: 100vh;
+    background-color: var(--grigioChiaro);
+    align-items: center;
+    justify-content: center;
+}

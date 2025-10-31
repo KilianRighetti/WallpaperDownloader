@@ -13,6 +13,9 @@
     --grigioScuro: #CECDCF;
     --strokeScura: #767676;
     --nero: #242121;
+
+    --verdeAcqua: #5E8189;
+    --verdino: #63895E;
 }
 
 
@@ -21,36 +24,36 @@
 ------------------------------------------*/
 #main {
     width: 100%;
+    height: auto;
     display: flex;
     flex-direction: column;
-    background-color: rgb(122, 122, 57);
+    background-color: var(--grigioChiaro);
 }
 
 #upperPart, #lowerPart{
+    width: 100%;
     display: flex;
     height: fit-content;
 }
 
 #upperPart {
+    top: 0;
+    position: sticky;
     height: 80px;
-    width: 100%;
 
     background-color: var(--grigioChiaro);
     border: solid var(--grigioStroke);
     border-width: 0px 0px 3px 0px;
     padding: 10px 5%;
 
-    flex: flex;
     flex-direction: row;
     gap: 20px; /* Spazio tra elementi */
     justify-content: center;
 }
 
 #lowerPart {
-    width: 100%;
     flex-grow: 1; /* Riempie lo spazio rimanente */
-    background-color: var(--grigioChiaro);
-    height: fit-content;
+    flex-direction: row;
 }
 
 
@@ -116,13 +119,12 @@
     cursor: pointer;
     width: fit-content;
     height: 100%;
+    color: var(--nero);
 
     border: 3px solid;
     border-radius: 10px;
-    text-align: center;
-    font-size: larger;
-    font-weight: bolder;
-
+    /* -----------> [!!!!!!!!!!!!!] manca il link centrato al centro */
+    text-decoration: none;
     padding: 5px 30px;
 }
 
@@ -136,7 +138,7 @@
 }
 
 #buttonLogin:hover {
-    background-color: var(--grigioChiaro);
+    background-color: var(--grigioScuro);
 }
 
 #buttonRegistrati:hover {
@@ -148,24 +150,30 @@
     LowerPart
 ------------------------------------------*/
 
-#lP_left{
+#lP_left, #lP_right{
     display: flex;
     flex-direction: column;
+    height: 100vh;
+}
 
-    min-width: 300px;
+#lP_left {
+    flex-shrink: 0; /* evita che si riduca */
+    position: fixed;
+    top: 80px;
+
+    width: 20%;
+    height: 100vh; /* vh --> 100% della finestra */
+
     padding: 20px;
-    height: auto;
-
     border: 3px solid;
     border-width: 0px 3px 0px 0px;
     border-color: var(--grigioStroke);
 }
 
 #lP_right{
-    display: flex;
-    flex-direction: column;
+    height: auto;
     padding: 50px 20px 50px 100px;
-
+    margin-left: 20%;
     gap: 20px;
 }
 
@@ -189,8 +197,55 @@
 
 
 
+/*---------------------------------------
+    Filter Bar
+------------------------------------------*/
 
+#lP_left h1{
+    width: 100%;
+    height: fit-content;
 
+    font-size: 15;
+    margin: 1rem 0 1rem;
+}
+
+.lP_left_filterContainer{
+    display: flex;
+    flex-direction: row;
+
+    flex-wrap: wrap;  /* Permette ai bottoni di spostarsi sotto quando non c'è più spazio */
+    gap: 5px;
+
+    width: 100%;
+    height: fit-content;
+}
+
+.lP_left_filterButton {
+    display: flex;
+    justify-content: center;  /* centra orizzontalmente */
+    align-items: center;      /* centra verticalmente */
+    
+    width: fit-content;
+    height: fit-content;
+    min-width: 100px;
+    padding: 8px;
+
+    background-color: transparent;
+    border: 3px solid var(--grigioStroke);
+    border-radius: 20px;
+
+    cursor: pointer;
+}
+
+.lP_left_filterButton:hover {
+    background-color: var(--grigioScuro);
+}
+
+/* [!!!] --> Bottone cliccato dall'utente per il filrtro */
+.lP_left_filterButton.active {
+    border-color: var(--verdeAcqua);
+    font-weight: bolder;
+}
 
 
 
@@ -262,20 +317,3 @@
   #downloadBtn:hover {
     background-color: #0056b3;
   }
-  
-
-
-
-
-
-#overlayDownload{  
-    position: fixed; /* Lo rende grande quanto la pagina   */
-    display: block;
-    z-index: 5;
-    width: 100%;
-    height: 100%;
-
-    background-color: var(--grigioScuro);
-    opacity: 80%;
-    transition: 0.5s;
-}
