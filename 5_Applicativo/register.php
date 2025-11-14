@@ -14,6 +14,7 @@ include("config.php");
 
   <!-- MDBootstrap CSS -->
   <link rel="stylesheet" href="mdb/mdb.min.css" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/> -->
 
   <!-- CSS personalizzato -->
   <link rel="stylesheet" type="text/css" href="login_register_css.css">
@@ -45,10 +46,10 @@ include("config.php");
     <div class="container py-5 h-100">
       <div class="row d-flex align-items-center justify-content-center h-100">
         <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-          <form action="/WallpaperDownloader/login_process.php" method="POST">
-            <!-- Titolo Login -->
-            <h2 class="text-center mb-4">LOGIN</h2>
+          <!-- Titolo Registrazione -->
+          <h2 class="text-center mb-4">REGISTRATI</h2>
 
+          <form action="/WallpaperDownloader/register_process.php" method="POST">
             <!-- Username -->
             <div class="form-outline mb-4" data-mdb-input-init>
               <input type="username" name="username" class="form-control form-control-lg" required />
@@ -61,22 +62,20 @@ include("config.php");
               <label class="form-label" for="password">Password</label>
             </div>
 
-            <!-- Opzioni -->
-            <div class="d-flex justify-content-around align-items-center mb-4">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
-                <label class="form-check-label" for="form1Example3">Ricorda al prossimo login</label>
-              </div>
-              <!-- <a href="#!">Password dimenticata?</a> -->
+            <!-- Password ripetuta -->
+              <div class="form-outline mb-4" data-mdb-input-init>
+              <input type="password" name="repeatedPassword" class="form-control form-control-lg" required/>
+              <label class="form-label" for="password">Ripeti la password</label>
             </div>
+
 
             <!-- Pulsante -->
             <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn_subit">
-              Login
+              Registrati
             </button>
 
             <br>
-            <p>Non hai un account? <a href="register.php" class="link-info">Registrati</a></p>
+            <p>Hai già un account? <a href="login.php" class="link-info">Login</a></p>
           </form>
         </div>
       </div>

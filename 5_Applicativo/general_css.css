@@ -16,6 +16,7 @@
 
     --verdeAcqua: #5E8189;
     --verdino: #63895E;
+    --rosso: #bd6666;
 }
 
 
@@ -120,16 +121,20 @@
     width: fit-content;
     height: 100%;
     color: var(--nero);
-
     border: 3px solid;
     border-radius: 10px;
     /* -----------> [!!!!!!!!!!!!!] manca il link centrato al centro */
     text-decoration: none;
-    padding: 5px 30px;
+    padding: 15px 30px;
 }
 
 #buttonLogin {
     border-color: var(--strokeScura);
+}
+
+#buttonLogout {
+    background-color: var(--rosso);
+    color: var(--bianco);
 }
 
 #buttonRegistrati {
@@ -143,6 +148,10 @@
 
 #buttonRegistrati:hover {
     background-color: #504545;
+}
+
+#uP_logged_username {
+    padding-top: 1rem; /* Centra verticalmente */
 }
 
 

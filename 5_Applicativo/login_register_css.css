@@ -20,7 +20,7 @@
 
 
 /*---------------------------------------
-    Main Sections
+    Main
 ------------------------------------------*/
 #main {
     width: 100%;
@@ -28,4 +28,11 @@
     background-color: var(--grigioChiaro);
     align-items: center;
     justify-content: center;
+}
+
+/*---------------------------------------
+    Other
+------------------------------------------*/
+#btn_subit {
+    background-color: var(--verdeAcqua);
 }
