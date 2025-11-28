@@ -4,6 +4,28 @@ include("config.php"); // esegue
 $tutteImmagini = $conn->query("SELECT nome_file, nome_categoria, nome_tag FROM foto");
 $tutteCategorie = $conn->query("SELECT nome FROM categoria");
 $tuttiTag = $conn->query("SELECT nome FROM tag");
+
+// [ SEZIONE CON AJAX ]
+// Quando la pagina riceve una richiesta POST (possibile solo con il download) ...
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_SESSION['username'])){
+    $receivedVariable = $_POST["nome_file"];
+
+    // [ SEZIONE DI RACCOLTA DATI PER LA QUERY SQL]   
+    //  >> "real_escape_string" crea una stringa SQL utilizzabile nelle query + lo pulisce
+    $nomeFile = $conn->real_escape_string($_POST['nome_file']);
+
+    // Trova l'ID dell'immagine scaricata a partire dal suo nome_file (ovvero url) --> È DI TIPO ARRAY
+    $idImmagineSQL = $conn->query("SELECT id FROM foto WHERE nome_file='$nomeFile' ");
+    // Converte in numero idImmagineSQL
+    // >> Fetch_assoc()[] prende il valore dell'unica riga --> ["id" => 7]["id"]
+    $idFoto = $idImmagineSQL->fetch_assoc()["id"];
+
+    $utente = $_SESSION['username'];
+    $ora = date("Y-m-d H:i:s"); 
+
+    $conn->query("INSERT INTO downloads (fk_utente, fk_idFoto, data_ora)
+                VALUES ('$utente', $idFoto, '$ora') ");
+}
 ?>
 
 <!DOCTYPE html>
@@ -33,8 +55,6 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
         <button id="downloadBtn">Download</button>
     </div>
 
-
-
     <div id="upperPart">
         <img id="uP_logo" src="img/logo.png">
         <div id="uP_searchBarContainer">
@@ -44,7 +64,7 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
             </div>
         </div>
         <?php if(isset($_SESSION['username'])){ // SE l'utente è loggato ?>
-            <h2 id="uP_logged_username"> <?php echo $_SESSION['username']; ?> </h2>
+            <a href="account.php" id="uP_logged_username"> <?php echo $_SESSION['username']; ?> </a>
             <a class="uP_button" id="buttonLogout" href="logout_session.php">Logout</a>
         <?php } else { ?>
             <a class="uP_button" id="buttonLogin" href="login.php">Login</a>
@@ -76,10 +96,8 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
                         }
                     }
                 ?>
-            </div>            
-
+            </div>
         </div>
-
 
         <div id="lP_right">
             <h2> IMMAGINI </h2>
@@ -87,6 +105,8 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
                 // Trasforma l'oggetto "mysqli_result" in varie stringhe tramite un FOR
                 if ($tutteImmagini->num_rows > 0) {
                     while ($row = $tutteImmagini->fetch_assoc()) {
+                        // "htmlspecialchars()" converte i caratteri speciali (<> " ') in encode HTML (&amp;, &quot;, &#039)
+                        // >> Evita XSS (Cross-Site Scripting Attack)
                         $categoria = htmlspecialchars($row["nome_categoria"]);
                         $tag = htmlspecialchars($row["nome_tag"]);
                         $file = htmlspecialchars($row["nome_file"]);
@@ -97,20 +117,48 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
             ?>
         </div>
 
-
-
     </div>
-
-
-
-
 </div>
 
 </body>
 <!-- [ Questa funzionalità va esgeuita alla fine per permettere ai componeneti HTML di generarsi  (altrimenti la lista containers è vuota) ] -->
 
 <script>
-// ChatGPT
+// Download dell'Immagine
+downloadBtn.addEventListener("click", () => {
+    const url = downloadBtn.getAttribute("data-url");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = url.split("/").pop(); // Nome file automatico
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Richiama la funzione downloadImmagine passando il nome dell'immagine
+    downloadImmagine(url);
+});
+
+
+
+// https://www.geeksforgeeks.org/php/how-to-pass-javascript-variables-to-php/ + ChatGPT
+// {ChatGPT - Codice AJAX per permettere il download delle immagini tramite PHP}
+function downloadImmagine() {
+    const url = downloadBtn.getAttribute("data-url");
+    const fileName = url.split("/").pop();
+
+    // Dati da mandare a PHP (in forma "application/x-www-form-urlencoded")
+    const dataToSend = "nome_file=" + encodeURIComponent(fileName);
+
+    // [ Invio dei dati con AJAX ]
+    const xhr = new XMLHttpRequest(); // Crea l'oggetto AJAX
+    xhr.open("POST", "index.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.send(dataToSend);
+}
+
+
+// {ChatGPT}
 function aggiornaImmagini() {
   const immagini = document.querySelectorAll('#lP_right img');
 
@@ -169,6 +217,8 @@ containers.forEach(container => {
         });
     });
 });
+
+
 
 // [!!!!!!!!!!!!!!!!!!!!!!] --> C'ê un bug grafico quando ci sono poche immagini, si vede il body bianco
 

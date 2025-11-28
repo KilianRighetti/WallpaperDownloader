@@ -1,7 +1,28 @@
 <?php 
 session_start(); // <-- SENZA QUESTO, $_SESSION è vuoto
 include("config.php"); // esegue 
-$tutteImmagini = $conn->query("SELECT nome_file, nome_categoria, nome_tag FROM foto");
+
+// [ PAGINA RISERVATA ]
+if(!isset($_SESSION['username'])){
+    header("Location: login.php");
+    exit;
+}
+
+$immaginiUtente = $conn->query("SELECT nome_file, nome_categoria, nome_tag
+                               FROM foto
+                               WHERE nome_autore = '{$_SESSION['username']}' ");
+$downloadsUtente = $conn->query("SELECT nome_file, nome_categoria, nome_tag
+                                FROM foto
+                                LEFT JOIN downloads
+                                ON foto.id = downloads.fk_idFoto
+                                WHERE downloads.fk_utente = '{$_SESSION['username']}' ");
+
+$passwordUser = $conn->query("SELECT password
+                            FROM utente 
+                            WHERE nome_utente = '{$_SESSION['username']}' ");
+$row = $passwordUser->fetch_assoc();
+$password = $row['password'];
+
 $tutteCategorie = $conn->query("SELECT nome FROM categoria");
 $tuttiTag = $conn->query("SELECT nome FROM tag");
 ?>
@@ -19,6 +40,7 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
   <!-- Favicons and Icons -->
   <!-- <link rel="icon" href="images/general/Favicon.png" type="image/x-icon"> -->
   <!-- CSS Stylesheets and JavaScript-->
+  <link rel="stylesheet" type="text/css" href="general_css.css">
   <link rel="stylesheet" type="text/css" href="account_css.css">
   <script src="JavaScript.js"></script>
 </head>
@@ -28,92 +50,94 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
     <div id="leftPart">
         <a href="index.php" class="goBack">
             🡸
-        </a>    
+        </a>
         <img id="uP_logo" src="img/logo.png">
     </div>
-    <div id="rightPart">
+    
+    
         <div id="accountContainer">
             <div id="aC_upper">
-                
+                <div id="aC_upper_image_section">
+                    <img src="img/account_img.png">
+                </div>
+                <div id="aC_upper_data_section">
+                    <h2>Nome</h2>
+                    <input type="username" class="account_input_text" value="<?php echo $_SESSION['username']; ?>" readonly>
+                    <h2>Password</h2>
+                    <input type="password" class="account_input_text" value="<?php echo $password; ?>" readonly>                
+                </div>
             </div>
+            <div id="aC_lower">
+
+            <div id="tabSelector">
+                <button class="tabBtn active" data-target="sezioneFoto">LE TUE IMMAGINI</button>
+                <button class="tabBtn" data-target="sezioneDownload">CRONOLOGIA DOWNLOAD</button>
+            </div>
+
+            <div id="sezioneFoto" class="tabContent active">
+                <?php
+                // Trasforma l'oggetto "mysqli_result" in varie stringhe tramite un FOR
+                if ($immaginiUtente->num_rows > 0) {
+                    while ($row = $immaginiUtente->fetch_assoc()) {
+                        // "htmlspecialchars()" converte i caratteri speciali (<> " ') in encode HTML (&amp;, &quot;, &#039)
+                        // >> Evita XSS (Cross-Site Scripting Attack)
+                        $categoria = htmlspecialchars($row["nome_categoria"]);
+                        $tag = htmlspecialchars($row["nome_tag"]);
+                        $file = htmlspecialchars($row["nome_file"]);
+
+                        echo "<img src='upload/$file' data-categoria='$categoria' data-tag='$tag'>";
+                    }
+                } else {
+                    echo "<h3> Non hai caricato alcuna foto </h3>";
+                }
+                ?>
+            </div>
+
+            <div id="sezioneDownload" class="tabContent">
+                <?php
+                // Trasforma l'oggetto "mysqli_result" in varie stringhe tramite un FOR
+                if ($downloadsUtente->num_rows > 0) {
+                    while ($row = $downloadsUtente->fetch_assoc()) {
+                        // "htmlspecialchars()" converte i caratteri speciali (<> " ') in encode HTML (&amp;, &quot;, &#039)
+                        // >> Evita XSS (Cross-Site Scripting Attack)
+                        $categoria = htmlspecialchars($row["nome_categoria"]);
+                        $tag = htmlspecialchars($row["nome_tag"]);
+                        $file = htmlspecialchars($row["nome_file"]);
+
+                        echo "<img src='upload/$file' data-categoria='$categoria' data-tag='$tag'>";
+                    }
+                } else {
+                    echo "<h3> Non hai mai scaricato foto </h3>";
+                }
+                ?>
+            </div>
+
         </div>
     </div>
 </div>
 
 
-
-
 </body>
 <!-- [ Questa funzionalità va esgeuita alla fine per permettere ai componeneti HTML di generarsi  (altrimenti la lista containers è vuota) ] -->
-
 <script>
-// ChatGPT
-function aggiornaImmagini() {
-  const immagini = document.querySelectorAll('#lP_right img');
+    const tabButtons = document.querySelectorAll(".tabBtn");
+    const tabContents = document.querySelectorAll(".tabContent");
 
-  immagini.forEach(img => {
-      const cat = img.dataset.categoria;
-      const tag = img.dataset.tag;
+    tabButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
 
-      // Mostra solo se corrisponde al filtro (categoria O tag)
-      if((!filtroCategoria || filtroCategoria === cat) && (!filtroTag || filtroTag === tag)) {
-        img.style.display = '';
-      } else {
-        img.style.display = 'none';
-      }
-  });
-}
+            // Rimuovi classe active da tutti i bottoni
+            tabButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
 
+            // Nascondi tutte le sezioni
+            tabContents.forEach(sec => sec.classList.remove("active"));
 
-let filtroCategoria = null;
-let filtroTag = null;
-
-// Variabile che contiene tutti i containers della pagina:
-// ==> In questo caso, 'Categorie' e 'Tags'
-const containers = document.querySelectorAll('.lP_left_filterContainer');
-
-containers.forEach(container => {
-    const buttons = container.querySelectorAll('.lP_left_filterButton');
-
-    // Ciclo che passa ogni bottone all'interno del contenitore
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            // [ RACCOLTA dei valori ]
-            const tipo = container.dataset.tipo; // Prende 'data-tipo="Categoria / Tags"' dal DIV dei conteiner
-            const selectedValue = button.textContent; // Prende il nome contenuto nel button
-            console.log(`Filtro selezionato: ${selectedValue}`);
-
-
-            // [ GESTIONE del bottone attivo ]
-            // >> Se il bottone era già attivo, lo disattivo e resetto il filtro...
-            if(button.classList.contains('active')){
-                button.classList.remove('active');
-                if(tipo === "Categoria") filtroCategoria = null;
-                else if(tipo === "Tags") filtroTag = null;
-            // >> SE non era attivo, lo imposto come active
-            } else {
-                buttons.forEach(b => b.classList.remove('active')); // Toglie 'active' dagli altri bottoni nel container
-                button.classList.add('active'); // Attiva SOLO il bottone cliccato
-                // [ AGGIORNAMENTO del filtro ]
-                if(tipo === "Categoria"){
-                    filtroCategoria = selectedValue;
-                } else if(tipo === "Tags"){
-                    filtroTag = selectedValue;
-                }
-            }
-
-            // Aggiorna le immagini
-            aggiornaImmagini();
+            // Mostra la sezione selezionata
+            const target = document.getElementById(btn.dataset.target);
+            target.classList.add("active");
         });
     });
-});
-
-
-// [!!!!!!!!!!!!!!!!!!!!!!] --> C'ê un bug grafico quando ci sono poche immagini, si vede il body bianco
-
-
 </script>
-
-
 
 </html>

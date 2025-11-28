@@ -2,19 +2,30 @@
 document.addEventListener("DOMContentLoaded", function() {
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImg");
+  // [ Pagina home ]
   const caption = document.getElementById("caption");
   const closeBtn = document.getElementsByClassName("close")[0];
-  const downloadBtn = document.getElementById("downloadBtn");
+  // [ Pagina infoimage ]
+  // INSERIRE GLI ALTRI ELEMENTIIIIIIIIIIIIIIIII
+  const saveBtn = document.getElementById("saveBtn");
 
   // Seleziona tutte le immagini nella sezione
-  const immagini = document.querySelectorAll("#lP_right img"); // Seleziona tutte le immagini della sezione
+  const immagini = document.querySelectorAll("img[data-categoria]"); // Seleziona TUTTE le immagini CON i tag "data-categoria" e "data-tag"
 
   immagini.forEach(img => {
     img.addEventListener("click", () => { // Aggiunge evento click
-      modal.style.display = "block";
-      modalImg.src = img.src;
-      caption.textContent = img.src.split("/").pop(); // Prende il nome del file
-      downloadBtn.setAttribute("data-url", img.src); // Dà al download come url l'src diretta dell'immagine
+      
+      if (document.URL.includes("index.php") ) {
+        modal.style.display = "block";
+        modalImg.src = img.src;
+        caption.textContent = img.src.split("/").pop(); // Prende il nome del file
+        downloadBtn.setAttribute("data-url", img.src); // Dà al download come url l'src diretta dell'immagine
+
+      } else if(document.URL.includes("account.php") ) {
+       
+        const fileName = img.src.split("/").pop();
+        window.location.href = "infoimage.php?nome_file=" + encodeURIComponent(fileName); // Si sposta su pagina
+      }
     });
   });
 
@@ -28,19 +39,5 @@ document.addEventListener("DOMContentLoaded", function() {
     if (e.target === modal) {
       modal.style.display = "none";
     }
-  });
-
-
-
-
-  // Download dell'Immagine
-  downloadBtn.addEventListener("click", () => {
-    const url = downloadBtn.getAttribute("data-url");
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = url.split("/").pop(); // Nome file automatico
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
   });
 });

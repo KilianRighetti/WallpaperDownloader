@@ -29,6 +29,7 @@ if ($risultato->num_rows >= 1) {
 
     // Alert + Reindirizzamento a Login
     echo "<script>alert('Account creato!'); window.location.href='login.php';</script>";
+    // {FINE DELLA PARTE GENERATA DA CHATGPT}
     header("Location: login.php");
     exit;
 }

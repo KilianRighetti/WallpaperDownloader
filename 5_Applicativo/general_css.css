@@ -12,12 +12,13 @@
     --grigioStroke: #CDC3C3;
     --grigioScuro: #CECDCF;
     --strokeScura: #767676;
+    --grigioScurissimo: #524D4D;
     --nero: #242121;
-
     --verdeAcqua: #5E8189;
     --verdino: #63895E;
     --rosso: #bd6666;
 }
+
 
 
 /*---------------------------------------
@@ -152,6 +153,15 @@
 
 #uP_logged_username {
     padding-top: 1rem; /* Centra verticalmente */
+    text-decoration: none;
+    color: var(--nero);
+    font-size: x-large;
+    width: 3.5rem; /* Evita l'allargamento del tag <a> con il font-weight   */
+}
+
+#uP_logged_username:hover {
+    font-weight: 650;
+    color: var(--grigioScurissimo);
 }
 
 
@@ -197,8 +207,9 @@
     Main
 ------------------------------------------*/
 
-#lP_right img{
-    width: 30%;
+
+#lP_right img, #sezioneFoto img{
+    width: 40%;
     height: auto;
 
     border-radius: 15px;
