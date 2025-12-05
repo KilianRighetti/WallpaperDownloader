@@ -9,6 +9,7 @@
     --verdeAcqua: #5E8189;
     --verdino: #63895E;
     --rosso: #bd4b4b;
+    --arancione: #d18a61;
 }
 
 /*---------------------------------------
@@ -16,11 +17,9 @@
 ------------------------------------------*/
 #main {
     width: 100%;
-    min-height: 100vh;
-    height: auto;
+    height: 100vh;
     display: flex;
     flex-direction: row;
-    background-color: var(--grigioChiaro);
 }
 
 #leftPart, #rightPart{
@@ -76,10 +75,12 @@
 
 #accountContainer {
     width: 100%;
-    min-height: 100vh;
+    height: fit-content;
     background-color: var(--bianco);
     border-radius: 50px 50px 0 0;
     padding: 3rem;
+    margin-top: 2rem;
+    margin-right: 4rem;
 }
 
 #aC_upper {
@@ -183,7 +184,7 @@
     opacity: 1;
 }
 
-#sezioneFoto, #sezioneDownload {
+#sezioneFoto, #sezioneDownload, #sezioneAggiunta {
     border: 2px solid var(--grigioScuro);
     border-radius: 0 6px 6px 6px;
     padding: 20px;
@@ -252,7 +253,8 @@
 }
 
 #modalInner {
-    background: var(--grigioChiaro);
+    background: var(--bianco);
+    box-shadow: 0 0 8px var(--grigioScurissimo);
     padding: 20px;
     width: 60%;
     margin: auto;
@@ -295,20 +297,22 @@
     flex-wrap: wrap
 }
 
-/* BOTTONE SALVA */
-#saveBtn {
+#saveBtn, #deleteBtn, #addBtn{
     flex: 1;
-    background-color: var(--verdino);   /* verdino */
-    color: var(--bianco);
     border: none;
     padding: 12px;
     border-radius: 8px;
     font-size: 17px;
+    color: var(--bianco);
     cursor: pointer;
     font-weight: bold;
     transition: 0.2s ease;
 }
 
+/* BOTTONE SALVA */
+#saveBtn {
+    background-color: var(--verdino); 
+}
 #saveBtn:hover {
     background-color: #4f6e4c;
 }
@@ -317,16 +321,15 @@
 #deleteBtn {
     flex: 1;
     background-color: var(--rosso);
-    color: var(--bianco);
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 17px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s ease;
 }
-
 #deleteBtn:hover {
     background-color: #a33232;
+}
+
+/* BOTTONE AGGIUNGI */
+#addBtn {
+    background-color: var(--arancione);
+}
+#addBtn:hover {
+    background-color: #c07246;
 }

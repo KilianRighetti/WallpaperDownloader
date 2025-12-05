@@ -92,38 +92,69 @@ if ($_SERVER["REQUEST_METHOD"] === "GET"){
         </div>
     </div>
 
-<script>
-// Pulsante Elimina (solo commentato)
-document.getElementById("deleteBtn").addEventListener("click", () => {
-    if(confirm("Sei sicuro di voler eliminare questa immagine?")) {
-        // Se elimina torna all'account
-
-        alert("Funzione eliminazione commentata per sicurezza.");
-    }
-});
-
-// Pulsante Salva modifiche
-document.getElementById("saveBtn").addEventListener("click", () => {
-    const categoria = document.getElementById("categoria").value;
-    const tag = document.getElementById("tag").value;
-    const file = '<?php echo $img['nome_file']; ?>';
-
-    const formData = new URLSearchParams();
-    formData.append('file', file);
-    formData.append('categoria', categoria);
-    formData.append('tag', tag);
-
-    fetch('update_img.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-    })
-    .catch(err => console.error(err));
-});
-</script>
-
 </body>
+
+
+<script>
+    // [ Pulsante Elimina ]
+    // {ChatGPT - Tranne l'action ed i commenti aggiunti da me}
+    document.getElementById("deleteBtn").addEventListener("click", () => {
+        if(confirm("Sei sicuro di voler eliminare questa immagine?")) {
+            const nome_file = '<?php echo $img['nome_file']; ?>';
+            // Crea un oggetto di tipo 'URLSearchParams' per inviare i dati
+            const formData = new URLSearchParams();
+            formData.append('nome_img', nome_img);
+            formData.append('action', "delete");
+
+            // [ Invio al file ]
+            // >> Il fetch() invia una RICHIESTA ASINCRONA --> le risposte sono il .then()
+            // >> 'body: formData' contiene il nome dell file da eliminare (vedi 3 righe sopra)
+            fetch('photo_alteration_process.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text()) // Converte la risposta del server in Stringa
+            .then(data => {
+                // Esito e ridizionamento
+                alert(data);
+                window.location.href = "account.php";
+            })
+            .catch( err => {
+                // Stampa eventuali errori nella console
+                err => console.error(err)
+            });
+        }
+    });
+
+
+    // [ Pulsante Salva modifiche ]
+    // [!!!] NOTA: Questa sezione di codice è  identica alla precedente, non la commento per questa ragione
+    document.getElementById("saveBtn").addEventListener("click", () => {
+        const categoria = document.getElementById("imgCategoria").value;
+        const tag = document.getElementById("imgTag").value;
+        const nome_img = document.getElementById("imgName").value;
+        const nome_file = '<?php echo $img['nome_file']; ?>';
+
+        const formData = new URLSearchParams();
+        formData.append('nome_img', nome_img);
+        formData.append('nome_file', nome_file);
+        formData.append('categoria', categoria);
+        formData.append('tag', tag);
+        formData.append('action', "update");
+
+
+        fetch('photo_alteration_process.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.text())
+        .then(data => {
+            alert(data);
+            window.location.href = "account.php";
+        })
+        .catch( err => {
+            err => console.error(err)
+        });
+    });
+</script>
 </html>

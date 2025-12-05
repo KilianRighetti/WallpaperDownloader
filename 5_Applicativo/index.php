@@ -217,10 +217,5 @@ containers.forEach(container => {
         });
     });
 });
-
-
-
-// [!!!!!!!!!!!!!!!!!!!!!!] --> C'ê un bug grafico quando ci sono poche immagini, si vede il body bianco
-
 </script>
 </html>

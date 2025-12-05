@@ -5,9 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
   // [ Pagina home ]
   const caption = document.getElementById("caption");
   const closeBtn = document.getElementsByClassName("close")[0];
-  // [ Pagina infoimage ]
-  // INSERIRE GLI ALTRI ELEMENTIIIIIIIIIIIIIIIII
-  const saveBtn = document.getElementById("saveBtn");
 
   // Seleziona tutte le immagini nella sezione
   const immagini = document.querySelectorAll("img[data-categoria]"); // Seleziona TUTTE le immagini CON i tag "data-categoria" e "data-tag"
@@ -22,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
         downloadBtn.setAttribute("data-url", img.src); // Dà al download come url l'src diretta dell'immagine
 
       } else if(document.URL.includes("account.php") ) {
-       
         const fileName = img.src.split("/").pop();
         window.location.href = "infoimage.php?nome_file=" + encodeURIComponent(fileName); // Si sposta su pagina
       }

@@ -72,9 +72,11 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
             <div id="tabSelector">
                 <button class="tabBtn active" data-target="sezioneFoto">LE TUE IMMAGINI</button>
                 <button class="tabBtn" data-target="sezioneDownload">CRONOLOGIA DOWNLOAD</button>
+                <button class="tabBtn" data-target="sezioneAggiunta">AGGIUNGI UN'IMMAGINE</button>
             </div>
 
             <div id="sezioneFoto" class="tabContent active">
+                <h3>(Clicca su un'immagine per modificarla)</h3>
                 <?php
                 // Trasforma l'oggetto "mysqli_result" in varie stringhe tramite un FOR
                 if ($immaginiUtente->num_rows > 0) {
@@ -104,12 +106,51 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
                         $tag = htmlspecialchars($row["nome_tag"]);
                         $file = htmlspecialchars($row["nome_file"]);
 
-                        echo "<img src='upload/$file' data-categoria='$categoria' data-tag='$tag'>";
+                        echo "<img src='upload/$file'>";
+                        // Togliere " data-categoria='$categoria' data-tag='$tag'" impediesce che l'immagine sia modificabile dall'utente
                     }
                 } else {
                     echo "<h3> Non hai mai scaricato foto </h3>";
                 }
                 ?>
+            </div>
+
+            <div id="sezioneAggiunta" class="tabContent">
+                <div id="modalFields">
+                    <label>Nome dell'immagine:</label>
+                    <input type="text" id="newImgName">
+
+                    <label>File:</label>
+                    <input type="file" id="newImgFile" name="newImgFile">
+
+
+                    <label>Categoria:</label>
+                    <select id="newImgCategoria">
+                        <?php
+                            while($categorie = $tutteCategorie->fetch_assoc()){
+                                $nomeCat = htmlspecialchars($categorie["nome"]); // Prende il nome delle categorie
+
+                                echo "<option value='$nomeCat'> $nomeCat </option>";
+                            }
+                        ?>
+                    </select>
+
+                    <label>Tag:</label>
+                    <select id="newImgTag">
+                        <?php
+                            while($tags = $tuttiTag->fetch_assoc()){
+                                $nomeTag = htmlspecialchars($tags["nome"]); // Prende il nome del tag
+
+                                echo "<option value='$nomeTag'> $nomeTag </option>";
+                            }
+                        ?>
+                    </select>
+
+                    <div id="modalButtons">
+                        <button id="addBtn">Aggiungi l'immagine al sito</button>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -125,12 +166,11 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
 
     tabButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-
             // Rimuovi classe active da tutti i bottoni
             tabButtons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            // Nascondi tutte le sezioni
+            // Nasconde tutte le sezioni (non attive)
             tabContents.forEach(sec => sec.classList.remove("active"));
 
             // Mostra la sezione selezionata
@@ -138,6 +178,48 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
             target.classList.add("active");
         });
     });
+
+
+    document.getElementById("addBtn").addEventListener("click", () => {
+        if(confirm("Vuoi aggiungere l'immagine al sito con questi dati?")) {
+            const nome_img = document.getElementById("newImgName").value;
+            const file = document.getElementById("newImgFile").value;
+            const categoria = document.getElementById("newImgCategoria").value;
+            const tag = document.getElementById("newImgTag").value;
+            
+            // Crea un oggetto di tipo 'URLSearchParams' per inviare i dati
+            const formData = new URLSearchParams();
+            formData.append('nome_img', nome_img);
+            formData.append('file', file);
+            formData.append('categoria', categoria);
+            formData.append('tag', tag);
+            formData.append('action', "add");
+
+            // [ Invio al file ]
+            // >> Il fetch() invia una RICHIESTA ASINCRONA --> le risposte sono il .then()
+            // >> 'body: formData' contiene il nome dell file da eliminare (vedi 3 righe sopra)
+            fetch('photo_alteration_process.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text()) // Converte la risposta del server in Stringa
+            .then(data => {
+                // Esito e ridizionamento
+                alert(data);
+                window.location.href = "account.php";
+            })
+            .catch( err => {
+                // Stampa eventuali errori nella console
+                err => console.error(err)
+            });
+
+        } else {
+            window.location.href = "account.php";
+        }
+    });
+
+
+
 </script>
 
 </html>
