@@ -1,7 +1,7 @@
 <?php 
 session_start(); // <-- SENZA QUESTO, $_SESSION è vuoto
 include("config.php"); // esegue 
-$tutteImmagini = $conn->query("SELECT nome_file, nome_categoria, nome_tag FROM foto");
+$tutteImmagini = $conn->query("SELECT nome, nome_file, nome_categoria, nome_tag FROM foto");
 $tutteCategorie = $conn->query("SELECT nome FROM categoria");
 $tuttiTag = $conn->query("SELECT nome FROM tag");
 
@@ -58,14 +58,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_SESSION['username'])){
     <div id="upperPart">
         <img id="uP_logo" src="img/logo.png">
         <div id="uP_searchBarContainer">
-            <input type="text" id="uP_search_text" placeholder="Ricerca">
+            <input type="text" id="uP_search_text" placeholder="Ricerca per nome le immagini..." maxlength="30">
             <div id="uP_search_img">
                 <img src="img/magnifying_glass.png">
             </div>
         </div>
         <?php if(isset($_SESSION['username'])){ // SE l'utente è loggato ?>
             <a href="account.php" id="uP_logged_username"> <?php echo $_SESSION['username']; ?> </a>
-            <a class="uP_button" id="buttonLogout" href="logout_session.php">Logout</a>
+            <a class="uP_button" id="buttonLogout" href="logout_session.php" onclick="return confirm('Sei sicuro di effettuare il logout?');">Logout</a>
         <?php } else { ?>
             <a class="uP_button" id="buttonLogin" href="login.php">Login</a>
             <a class="uP_button" id="buttonRegistrati" href="register.php">Registrati</a>
@@ -100,23 +100,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_SESSION['username'])){
         </div>
 
         <div id="lP_right">
-            <h2> IMMAGINI </h2>
-            <?php
-                // Trasforma l'oggetto "mysqli_result" in varie stringhe tramite un FOR
-                if ($tutteImmagini->num_rows > 0) {
-                    while ($row = $tutteImmagini->fetch_assoc()) {
-                        // "htmlspecialchars()" converte i caratteri speciali (<> " ') in encode HTML (&amp;, &quot;, &#039)
-                        // >> Evita XSS (Cross-Site Scripting Attack)
-                        $categoria = htmlspecialchars($row["nome_categoria"]);
-                        $tag = htmlspecialchars($row["nome_tag"]);
-                        $file = htmlspecialchars($row["nome_file"]);
-                
-                        echo "<img src='upload/$file' data-categoria='$categoria' data-tag='$tag'>";
+            <h2 class="titoloSection">IMMAGINI</h2>
+            <div id="imagesContainer">
+                <?php
+                    // Trasforma l'oggetto "mysqli_result" in varie stringhe tramite un FOR
+                    if ($tutteImmagini->num_rows > 0) {
+                        while ($row = $tutteImmagini->fetch_assoc()) {
+                            // "htmlspecialchars()" converte i caratteri speciali (<> " ') in encode HTML (&amp;, &quot;, &#039)
+                            // >> Evita XSS (Cross-Site Scripting Attack)
+                            $categoria = htmlspecialchars($row["nome_categoria"]);
+                            $tag = htmlspecialchars($row["nome_tag"]);
+                            $file = htmlspecialchars($row["nome_file"]);
+                            $nome = htmlspecialchars($row["nome"]);
+                    
+                            echo "<img src='upload/$file' data-categoria='$categoria' data-tag='$tag' data-nome='$nome'>";
+                        }
                     }
-                }
-            ?>
+                ?>
+            </div>
         </div>
-
     </div>
 </div>
 
@@ -178,6 +180,24 @@ function aggiornaImmagini() {
 let filtroCategoria = null;
 let filtroTag = null;
 
+function aggiornaImmaginiSearch(testoCercato){
+    const immagini = document.querySelectorAll('#lP_right img');
+
+    immagini.forEach(img => {
+        const nome = img.dataset.nome.toLowerCase();
+
+        if((nome.includes(testoCercato))) {
+            img.style.display = '';
+        } else if(nome === "" || nome === null || nome == undefined){ // SE la barra è vuota le mostra tutte
+            img.style.display = '';
+        }
+        else {
+            img.style.display = 'none';
+        }
+    });
+}
+
+
 // Variabile che contiene tutti i containers della pagina:
 // ==> In questo caso, 'Categorie' e 'Tags'
 const containers = document.querySelectorAll('.lP_left_filterContainer');
@@ -217,5 +237,10 @@ containers.forEach(container => {
         });
     });
 });
+
+
+uP_search_img.addEventListener("click", () => {
+    aggiornaImmaginiSearch(document.getElementById("uP_search_text").value);
+})
 </script>
 </html>

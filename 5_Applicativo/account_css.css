@@ -75,7 +75,8 @@
 
 #accountContainer {
     width: 100%;
-    height: fit-content;
+    height: max-content;
+    min-height: 100vh;
     background-color: var(--bianco);
     border-radius: 50px 50px 0 0;
     padding: 3rem;
@@ -176,12 +177,10 @@
 
 .tabContent {
     display: none;
-    opacity: 0;
 }
 
 .tabContent.active {
-    display: flex;
-    opacity: 1;
+    display: block; /* Server per il masonry */
 }
 
 #sezioneFoto, #sezioneDownload, #sezioneAggiunta {
@@ -192,14 +191,31 @@
     flex-direction: column;
 }
 
+#sezioneFoto.active,
+#sezioneDownload.active {
+    display: block; /* Attiva solo la tab visibile */
+
+    /* Masonry */
+    column-count: 3;
+    column-gap: 20px;
+}
+
+/* Immagini in formato Masonry */
 #sezioneFoto img,
 #sezioneDownload img {
-    /* MANCA UN MODO PER MOSTRARE LE INFO ACCANTO ALLE IMMAGINI */
-    width: 40%;
-    margin: 10px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
     border: 1px solid var(--nero);
-    border-radius: 6px;
+
     transition: 0.3s;
+    cursor: pointer;
+
+    /* Righe che evitano rotture nelle colonne */
+    break-inside: avoid-column;
+    page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
 }
 
 #sezioneFoto img:hover,
@@ -207,8 +223,23 @@
     transform: scale(1.05);
 }
 
+/*---------------------------------------
+    Responsive delle immagini
+------------------------------------------*/
 
+@media (max-width: 1200px) {
+    #sezioneFoto,
+    #sezioneDownload {
+        column-count: 2;
+    }
+}
 
+@media (max-width: 700px) {
+    #sezioneFoto,
+    #sezioneDownload {
+        column-count: 1;
+    }
+}
 
 /* ---------------------------------------
    MODAL STILE

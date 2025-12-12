@@ -116,13 +116,12 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
             </div>
 
             <div id="sezioneAggiunta" class="tabContent">
-                <div id="modalFields">
+                <form id="modalFields">
                     <label>Nome dell'immagine:</label>
-                    <input type="text" id="newImgName">
+                    <input type="text" id="newImgName" required>
 
                     <label>File:</label>
-                    <input type="file" id="newImgFile" name="newImgFile">
-
+                    <input type="file" id="newImgFile" name="newImgFile" required />  
 
                     <label>Categoria:</label>
                     <select id="newImgCategoria">
@@ -147,12 +146,11 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
                     </select>
 
                     <div id="modalButtons">
-                        <button id="addBtn">Aggiungi l'immagine al sito</button>
+                        <button id="addBtn" type="button">Aggiungi l'immagine al sito</button>
+                        <!-- Type="button" impedisce l'utilizzo di GET come metodo -->
                     </div>
-                </div>
-
+                </form>
             </div>
-
         </div>
     </div>
 </div>
@@ -183,12 +181,13 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
     document.getElementById("addBtn").addEventListener("click", () => {
         if(confirm("Vuoi aggiungere l'immagine al sito con questi dati?")) {
             const nome_img = document.getElementById("newImgName").value;
-            const file = document.getElementById("newImgFile").value;
+            const fileInput = document.getElementById("newImgFile"); // Prende il file
+            const file = fileInput.files[0]; // Ritorna l'elemento 0 della "FileList" fileInput
             const categoria = document.getElementById("newImgCategoria").value;
             const tag = document.getElementById("newImgTag").value;
             
-            // Crea un oggetto di tipo 'URLSearchParams' per inviare i dati
-            const formData = new URLSearchParams();
+            // [!!!] Crea un oggetto di tipo 'FormData' PER inviare un FILE all'interno di "file"
+            const formData = new FormData();
             formData.append('nome_img', nome_img);
             formData.append('file', file);
             formData.append('categoria', categoria);
@@ -204,22 +203,18 @@ $tuttiTag = $conn->query("SELECT nome FROM tag");
             })
             .then(res => res.text()) // Converte la risposta del server in Stringa
             .then(data => {
-                // Esito e ridizionamento
+                // Esito e ridirezionamento
                 alert(data);
                 window.location.href = "account.php";
             })
             .catch( err => {
                 // Stampa eventuali errori nella console
-                err => console.error(err)
+                err => console.error(err);
             });
 
         } else {
             window.location.href = "account.php";
         }
     });
-
-
-
 </script>
-
 </html>

@@ -18,10 +18,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') { // Richiesta che arriva dal pulsante
     
         if($delete) {
             // Cancella il file fisico
-            // $filePath = "./upload/" . $nomeFile;
-            // if(file_exists($filePath)) {
-            //     unlink($filePath);
-            // }
+            $filePath = "./upload/" . $nomeFile;
+            if(file_exists($filePath)) {
+                unlink($filePath);
+            }
             echo "Immagine eliminata con successo"; // Serve a far stampare un messaggio di successo nell'Alert
         } else {
             echo "Errore nell'eliminazione. Il file NON esiste.";
@@ -33,10 +33,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') { // Richiesta che arriva dal pulsante
         $nuovaCategoria = $conn->real_escape_string($_POST['categoria']);
         $nuovoTag = $conn->real_escape_string($_POST['tag']);
 
-        echo "UPDATE foto
-        SET nome='" . $nuovoNomeImg ."' ,  nome_categoria ='" . $nuovaCategoria ."', nome_tag= '". $nuovoTag ."'
-        WHERE nome_file='" . $nomeFile ."' ";
-        
         // Query per AGGIORNARE dal DB
         $update = $conn->query("UPDATE foto
                                 SET nome='" . $nuovoNomeImg ."' ,  nome_categoria ='" . $nuovaCategoria ."', nome_tag= '". $nuovoTag ."'
@@ -47,14 +43,42 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') { // Richiesta che arriva dal pulsante
         } else {
             echo "Errore nell'aggirnamento. Valori non validi.";
         }
+
     } else if ($action == 'add'){
-        $file = $conn->real_escape_string($_POST['file']);
         $nomeImg = $conn->real_escape_string($_POST['nome_img']);
+        $autore = $_SESSION['username'];
         $categoria = $conn->real_escape_string($_POST['categoria']);
         $tag = $conn->real_escape_string($_POST['tag']);
-        
-        // Query per AGGIORNARE dal DB
-        $add = $conn->query("< QWERY >");
+
+        // Gestione file upload
+        $fileTmp = $_FILES['file']['tmp_name']; // $_FILES viene riempita con il formData() di account.php
+        $fileName = basename($_FILES['file']['name']);
+        $fileDest = "upload/" . $fileName;
+
+        // controllo estensione
+
+        // Echo del file:
+        echo "1] TMP: $fileTmp<br>";
+        echo "2] NAME: $fileName<br>";
+        echo "3] DEST: $fileDest<br>";
+
+        // Salvataggio immagine
+        if(!file_exists($filePath)) { // Se l'immagine ha un nome univoco...
+            move_uploaded_file($fileTmp, $fileDest);
+        } else {
+            echo "Errore, esiste un'immagine con lo stesso nome";
+            exit;
+        }
+
+        // Dimensioni immagine
+        $dimensioniImg = getimagesize($fileDest);
+        $larghezza = $dimensioniImg[0];
+        $altezza   = $dimensioniImg[1];
+
+        $add = $conn->query("INSERT INTO foto (nome, nome_file, nome_autore, nome_categoria, nome_tag, larghezza, altezza)
+                VALUES ('$nomeImg', '$fileName', '$autore', '$categoria', '$tag', '$larghezza', '$altezza')");
+
+        echo $add;
 
         if($add) {
             echo "Immagine aggiunta con successo";

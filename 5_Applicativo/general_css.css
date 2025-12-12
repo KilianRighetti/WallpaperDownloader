@@ -126,7 +126,6 @@ body {
     color: var(--nero);
     border: 3px solid;
     border-radius: 10px;
-    /* -----------> [!!!!!!!!!!!!!] manca il link centrato al centro */
     text-decoration: none;
     padding: 15px 30px;
 }
@@ -171,7 +170,14 @@ body {
     LowerPart
 ------------------------------------------*/
 
-#lP_left, #lP_right{
+.titoloSection {
+    width: 100%;
+    column-span: all; /* forza il titolo a stare sopra tutte le colonne */
+    margin-bottom: 20px;
+}
+
+
+#lP_left {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -192,32 +198,49 @@ body {
     border-color: var(--grigioStroke);
 }
 
-#lP_right{
-    height: auto;
-    padding: 50px 20px 50px 100px;
+/* {SILE Colonne delle immagini - ChatGPT} */
+#lP_right {
     margin-left: 20%;
-    gap: 20px;
+    padding: 50px 20px 50px 100px;
+    column-count: 3;      /* Quante colonne */
+    column-gap: 20px;     /* Spaziatura tra colonne */
+
+    /* IMPORTANTISSIMO */
+    display: block;
 }
 
+#lP_right img {
+    width: 100%;          /* L’immagine si adatta alla colonna */
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    break-inside: avoid;  /* Evita spezzature */
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#lP_right img:hover {
+    transform: scale(1.03);
+}
 
 #lowerPart h2{
     font-size: 40px;
 }
 
-
-
 /*---------------------------------------
-    Main
+    Responsive delle immagini
 ------------------------------------------*/
 
-
-#lP_right img, #sezioneFoto img{
-    width: 40%;
-    height: auto;
-
-    border-radius: 15px;
+@media (max-width: 1200px) {
+    #lP_right {
+        column-count: 2;
+    }
 }
-
+@media (max-width: 700px) {
+    #lP_right {
+        column-count: 1;
+    }
+}
 
 
 /*---------------------------------------

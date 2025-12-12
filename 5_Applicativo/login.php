@@ -63,10 +63,10 @@ include("config.php");
 
             <!-- Opzioni -->
             <div class="d-flex justify-content-around align-items-center mb-4">
-              <div class="form-check">
+              <!-- <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
                 <label class="form-check-label" for="form1Example3">Ricorda al prossimo login</label>
-              </div>
+              </div> -->
               <!-- <a href="#!">Password dimenticata?</a> -->
             </div>
 
