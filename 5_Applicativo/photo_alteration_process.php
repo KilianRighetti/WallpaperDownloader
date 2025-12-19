@@ -49,6 +49,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') { // Richiesta che arriva dal pulsante
         $autore = $_SESSION['username'];
         $categoria = $conn->real_escape_string($_POST['categoria']);
         $tag = $conn->real_escape_string($_POST['tag']);
+        // Estensioni consentite
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         // Gestione file upload
         $fileTmp = $_FILES['file']['tmp_name']; // $_FILES viene riempita con il formData() di account.php
@@ -56,14 +59,18 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') { // Richiesta che arriva dal pulsante
         $fileDest = "upload/" . $fileName;
 
         // controllo estensione
+        if (!in_array($fileExtension, $allowedExtensions)) {
+            echo "Formato NON valido. Sono ammessi solo JPG, PNG e WEBP.";
+            exit;
+        }
 
         // Echo del file:
-        echo "1] TMP: $fileTmp<br>";
-        echo "2] NAME: $fileName<br>";
-        echo "3] DEST: $fileDest<br>";
+        // echo "1] TMP: $fileTmp<br>";
+        // echo "2] NAME: $fileName<br>";
+        // echo "3] DEST: $fileDest<br>";
 
         // Salvataggio immagine
-        if(!file_exists($filePath)) { // Se l'immagine ha un nome univoco...
+        if(!file_exists($fileDest)) { // Se l'immagine ha un nome univoco...
             move_uploaded_file($fileTmp, $fileDest);
         } else {
             echo "Errore, esiste un'immagine con lo stesso nome";
